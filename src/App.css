@@ -1,0 +1,112 @@
+.App {
+  text-align: center;
+  justify-content: space-around;
+  background-color: #282c34;
+  position: absolute;
+  top: 0;bottom: 0;right: 0;left: 0;
+  
+}
+
+/* .App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: red;
+} */
+
+/* .App-link {
+  color: #61dafb;
+} */
+
+#root {
+  height: 100%;
+  background-color: #282c34;
+  
+}
+.selection {
+  height: 100%;
+  background-color: #282c34;
+}
+
+.newArray {
+  border-radius: 30px;
+  margin: 5px;
+  padding: 15px;
+  float: left;
+  margin-left: 20px;
+  background-color: #EFB6F6;
+  transition: ease 0.25s all;
+}
+
+.newArray:hover {
+  background-color: #EBA2E6;
+}
+
+.sortType {
+  border-radius: 10px;
+  margin: 5px;
+  padding: 15px;
+}
+
+/* i got it */
+/* you want it to be a drop down? */
+/* look at how round it became phew */
+.start {
+  background-color: #A0FDA4;
+  border-radius: 30px;
+  margin: 5px;
+  padding: 12px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-size: large;
+  font-weight: bold;
+  float: right;
+  margin-right: 20px;
+  transition: ease 0.25s all;
+}
+
+.start:hover {
+  background-color: #80FD85;
+}
+
+.arrayInput {
+  float: left;
+  margin: 5px;
+  width: 222px;
+}
+
+.dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: white;
+  align-items: center;
+
+  
+}
+
+.dot-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 20px;
+
+}
