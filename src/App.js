@@ -42,18 +42,18 @@ function App() {
       localArr.push(circle)
     }
     // but this log has a mixed array
-    console.log(localArr); 
+    // console.log(localArr); 
     
-    await timer(5000) 
-    console.log("now it's bad bad")
+    // await timer(5000) 
+    // console.log("now it's bad bad")
     for (let i = localArr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [localArr[i], localArr[j]] = [localArr[j], localArr[i]];
-      let tempKey = localArr[i].key;
-      localArr[i].key = localArr[j].key;
-      localArr[j].key = tempKey;
+      // let tempKey = localArr[i].key;
+      // localArr[i].key = localArr[j].key;
+      // localArr[j].key = tempKey;
     }
-    console.log(localArr)
+    // console.log(localArr)
     //it's not
 
     setArr(localArr)
@@ -172,14 +172,18 @@ function App() {
 
       setArr(localArr)
     } else if (selected == "mergeSelect") { 
-      let localArr = arr; 
+      let localArr = [...arr]; 
+      console.log(arr);
+      console.log(localArr);
       setArr(mergeSort(localArr, localArr.length)); 
     } else if (selected == "bubbleSelect") {
       let localArr = arr; 
-      for (let i = 0; i < arr.length - 1; i++) {
-        let swapped = false;
+      let swapped;
+      // for (let i = 0; i < arr.length - 1; i++) {
+      do {
+        swapped = false;
         console.log(localArr)
-        for (let j = 0; j < arr.length - i - 1; j++) { 
+        for (let j = 0; j < arr.length - 1; j++) { 
           if (localArr[j].props.style.backgroundColor > localArr[j + 1].props.style.backgroundColor) {
             let newStyle =  {
               backgroundColor: localArr[j].props.style.backgroundColor,
@@ -189,13 +193,11 @@ function App() {
               backgroundColor: localArr[j + 1].props.style.backgroundColor,
               right: localArr[j + 1].props.style.right - 35 +'px',
             }
-            // like it goes through and sorts then goes to the start and sorts agian
             localArr[j] = <div className="dot" key={localArr[j].key} style={{...circleStyles, ...newStyle}}/>
             localArr[j + 1] = <div className="dot" key={localArr[j + 1].key} style={{...circleStyles, ...tempStyle}}/>
       
             setVisualizer(<div className="dot-container">{localArr}</div>) 
-            // the keys start wacky thats why
-            let temp = localArr[i];
+            let temp = localArr[j];
             localArr[j] = localArr[j + 1];
             localArr[j + 1] = temp;
 
@@ -203,10 +205,12 @@ function App() {
             await timer(1000);
           }
         }
-        if (!swapped) {
-          break;
-        }
-      }
+        // if (!swapped) {
+        //   break;
+        // }
+      } while (swapped);
+        
+      // }
 
       console.log(localArr)
       setArr(localArr)
@@ -214,14 +218,15 @@ function App() {
   }
 
   function mergeSort(a, n) {
+    console.log(a)
     if (n < 2) {
       return;
     }
 
     let mid = n / 2;
 
-    let leftArr = [mid];
-    let rightArr = [n - mid];
+    let leftArr = [];
+    let rightArr = [];
 
     for (let i = 0; i < mid; i++) {
       leftArr[i] = a[i];
@@ -234,7 +239,10 @@ function App() {
     mergeSort(leftArr, mid);
     mergeSort(rightArr, n - mid);
 
-    return merge(a, leftArr, rightArr, mid, n - mid);
+    console.log(a);
+    console.log(leftArr);
+    console.log(rightArr)
+    merge(a, leftArr, rightArr, mid, n - mid);
   }
 
   function merge(a, l, r, left, right) {
@@ -255,7 +263,7 @@ function App() {
     while (j < right) {
       a[k++] = r[j++];
     }
-    return a;
+    // return a;
   }
 
 
