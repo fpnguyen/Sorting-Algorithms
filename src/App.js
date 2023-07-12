@@ -21,7 +21,7 @@ function App() {
     
   }
 
-  const showCreateArray = () => {
+  const showCreateArray = async () => {
     setNumDots((Math.random() * 25) + 1)
     // setNumDots(16)
     setChoice(Math.floor(Math.random() * 6) + 1);
@@ -38,13 +38,23 @@ function App() {
       }
       
 
-      const circle = <div className="dot" style={{...circleStyles, ...addStyles}}></div>
+      const circle = <div className="dot" key={localArr.length} style={{...circleStyles, ...addStyles}}></div>
       localArr.push(circle)
     }
+    // but this log has a mixed array
+    console.log(localArr); 
+    
+    await timer(5000) 
+    console.log("now it's bad bad")
     for (let i = localArr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [localArr[i], localArr[j]] = [localArr[j], localArr[i]];
+      let tempKey = localArr[i].key;
+      localArr[i].key = localArr[j].key;
+      localArr[j].key = tempKey;
     }
+    console.log(localArr)
+    //it's not
 
     setArr(localArr)
 
@@ -102,8 +112,9 @@ function App() {
   const timer = ms => new Promise(res => setTimeout(res, ms))
 
   const startSort = async () => {
-    let localArr = arr;
+    console.log(arr)
     if (selected == "selectionSelect") {
+      let localArr = arr;
       for (let i = 0; i < arr.length - 1; i++) {
         let min = i;
         for (let j = i + 1; j < arr.length; j++) {
@@ -122,8 +133,8 @@ function App() {
           right: localArr[min].props.style.right + (min - i)*35 +'px',
         }
       
-        localArr[i] = <div className="dot" style={{...circleStyles, ...newStyle}}/>
-        localArr[min] = <div className="dot" style={{...circleStyles, ...tempStyle}}/>
+        localArr[i] = <div className="dot" key={i} style={{...circleStyles, ...newStyle}}/>
+        localArr[min] = <div className="dot" key={min} style={{...circleStyles, ...tempStyle}}/>
   
         setVisualizer(<div className="dot-container">{localArr}</div>) 
         
@@ -136,34 +147,69 @@ function App() {
       setArr(localArr)
       // setVisualizer(<div style={{backgroundColor: '#bbb'}}>{localArr}</div>)
     } else if (selected == "insertionSelect") {
+      let localArr = arr;
       for (let i = 1; i < arr.length; i++) {
-        let key = arr[i];
+        let key = localArr[i];
         let j = i - 1;
-        while (j >= 0 && arr[j].props.style.backgroundColor > key.props.style.backgroundColor) {
-          arr[j + 1] = arr[j];
+
+        while (j >= 0 && localArr[j].props.style.backgroundColor > key.props.style.backgroundColor) {
+          localArr[j + 1] = localArr[j];
+
+          let tempStyle =  {
+            backgroundColor: localArr[j + 1].props.style.backgroundColor,
+            right: localArr[j + 1].props.style.right + 35 +'px',
+          }
+          localArr[j + 1] = <div className="dot" key={localArr[j + 1].key} style={{...circleStyles, ...tempStyle}}/>
+
+          setVisualizer(<div className="dot-container">{localArr}</div>) 
           j--;
         }
-        arr[j + 1] = key;
+
+        localArr[j + 1] = key;
+
+        await timer(1000);
       }
-      
-    } else if (selected == "mergeSelect") {
-      mergeSort(arr, arr.length);
+
+      setArr(localArr)
+    } else if (selected == "mergeSelect") { 
+      let localArr = arr; 
+      setArr(mergeSort(localArr, localArr.length)); 
     } else if (selected == "bubbleSelect") {
+      let localArr = arr; 
       for (let i = 0; i < arr.length - 1; i++) {
         let swapped = false;
-        for (let j = 0; j < arr.length - i - 1; j++) { ///right here what is size?
-          if (arr[j].props.style.backgroundColor > arr[j + 1].props.style.backgroundColor) {
-            let temp = arr[i];
-            arr[j] = arr[j + 1];
-            arr[j + 1] = temp;
+        console.log(localArr)
+        for (let j = 0; j < arr.length - i - 1; j++) { 
+          if (localArr[j].props.style.backgroundColor > localArr[j + 1].props.style.backgroundColor) {
+            let newStyle =  {
+              backgroundColor: localArr[j].props.style.backgroundColor,
+              right: localArr[j].props.style.right + 35 +'px',
+            }
+            let tempStyle =  {
+              backgroundColor: localArr[j + 1].props.style.backgroundColor,
+              right: localArr[j + 1].props.style.right - 35 +'px',
+            }
+            // like it goes through and sorts then goes to the start and sorts agian
+            localArr[j] = <div className="dot" key={localArr[j].key} style={{...circleStyles, ...newStyle}}/>
+            localArr[j + 1] = <div className="dot" key={localArr[j + 1].key} style={{...circleStyles, ...tempStyle}}/>
+      
+            setVisualizer(<div className="dot-container">{localArr}</div>) 
+            // the keys start wacky thats why
+            let temp = localArr[i];
+            localArr[j] = localArr[j + 1];
+            localArr[j + 1] = temp;
 
             swapped = true;
+            await timer(1000);
           }
         }
         if (!swapped) {
           break;
         }
       }
+
+      console.log(localArr)
+      setArr(localArr)
     }
   }
 
@@ -188,7 +234,7 @@ function App() {
     mergeSort(leftArr, mid);
     mergeSort(rightArr, n - mid);
 
-    merge(a, leftArr, rightArr, mid, n - mid);
+    return merge(a, leftArr, rightArr, mid, n - mid);
   }
 
   function merge(a, l, r, left, right) {
@@ -196,7 +242,7 @@ function App() {
     let j = 0;
     let k = 0;
     while (i < left && j < right) {
-      if (l[i].props.style.backgroundColor <= r[j].props.style.backgroundColor) {
+      if (l[i].props.style.backgroundColor < r[j].props.style.backgroundColor) {
         a[k++] = l[i++];
       }
       else {
@@ -209,6 +255,7 @@ function App() {
     while (j < right) {
       a[k++] = r[j++];
     }
+    return a;
   }
 
 
