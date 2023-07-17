@@ -110,3 +110,8 @@
   padding: 20px;
 
 }
+
+.dot.animated {
+  /* animation-duration: 1s; */
+  transition: right 1s;
+}
