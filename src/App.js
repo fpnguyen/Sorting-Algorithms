@@ -24,8 +24,8 @@ function App() {
   }
 
   const showCreateArray = async () => {
-    setNumDots((Math.random() * 3) + 1)
-    // setNumDots(16)
+    setNumDots((Math.random() * 20) + 1)
+    //setNumDots(16)
     setChoice(Math.floor(Math.random() * 6) + 1);
     let localArr = [];
     for (let i = 0; i < dots; i++) {
@@ -252,96 +252,109 @@ function App() {
     return merge(left, right)
   }
 
+  function getIndexByKey(arr, key) {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].key == key) {
+          return i;
+      }
+    }
+    return null;
+  }
+
+  function getPrintArray(arr) {
+    let printableArray = [];
+
+    for (let i = 0; i < arr.length; i++) {
+      printableArray.push(arr[i].key + " : [" + arr[i].props.style.right + ", " + arr[i].props.style.backgroundColor + "]")
+    }
+
+    return printableArray;
+  }
+
   function merge(left, right) {
-    let sortedArr = [] // the sorted items will go here
-    let rightCounter = 0; //that's what i was gonna ask u LOLLLL
-    let leftCounter = 0; // do you know if + or - right moves it right?
-    let rightLength = right.length;
-    let leftLength = left.length;
+    let sortedArr = []
+
+    let fullArr = [...left,...right]
+    console.log(getPrintArray(fullArr))
 
     while (left.length && right.length) {
-      // Insert the smallest item into sortedArr
       if (left[0].props.style.backgroundColor < right[0].props.style.backgroundColor) {
-        //let l = left.shift(); 
+        let originalIndex = getIndexByKey(fullArr, left[0].key);
+
         let tempStyle = {
           backgroundColor: left[0].props.style.backgroundColor,
-          right: (parseInt(left[0].props.style.right, 10) + ((-(rightLength + leftCounter) * 43) + (sortedArr.length * 43))) + 'px',
-    
+          right: (parseInt(left[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 43)) + 'px',
         }
+        
+        console.log(left[0].key + " : " + originalIndex  + " - " + sortedArr.length)
+
         arrHandler.change(arrHandler.indexByKey(left[0].key), tempStyle);
         setVisualizer(<div className="dot-container">{arrHandler.getArr()}</div>)
      
-        leftCounter++;
-        sortedArr.push(left.shift());
+        left[0] = <div className="dot" key={left[0].key} style={{ ...circleStyles, ...tempStyle }} />
 
-        // sortedArr[sortedArr.length - 1] = <div className="dot" key={sortedArr[sortedArr.length - 1].key} style={{ ...circleStyles, ...tempStyle }} />
+        sortedArr.push(left.shift());
       } else {
-        // okie
-        // u should do robotics next week
+        let originalIndex = getIndexByKey(fullArr, right[0].key);
+
         let tempStyle = {
           backgroundColor: right[0].props.style.backgroundColor,
-          right: parseInt(right[0].props.style.right, 10) + (((leftLength + rightCounter) * 43) - (sortedArr.length * 43)) + 'px',
-          // right: right[0].props.style.right - (43 * (rightLength - rightCounter)) + 'px',
+          right: parseInt(right[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 43) + 'px',
         }
+
+        console.log(right[0].key + " : " + originalIndex  + " - " + sortedArr.length)
+
         arrHandler.change(arrHandler.indexByKey(right[0].key), tempStyle);
         setVisualizer(<div className="dot-container">{arrHandler.getArr()}</div>)
 
-        rightCounter++;
+        right[0] = <div className="dot" key={right[0].key} style={{ ...circleStyles, ...tempStyle }} />
+        
         sortedArr.push(right.shift())
-        // sortedArr[sortedArr.length - 1] = <div className="dot" key={sortedArr[sortedArr.length - 1].key} style={{ ...circleStyles, ...tempStyle }} />
       }
     }
+
+    console.log(getPrintArray([...sortedArr, ...left, ...right]))
+
+    while (left.length) {
+      let originalIndex = getIndexByKey(fullArr, left[0].key);
+
+      let tempStyle = {
+        backgroundColor: left[0].props.style.backgroundColor,
+        right: (parseInt(left[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 43)) + 'px',
+      }
+        
+      console.log(left[0].key + " : " + originalIndex  + " - " + sortedArr.length)
+
+      arrHandler.change(arrHandler.indexByKey(left[0].key), tempStyle);
+      setVisualizer(<div className="dot-container">{arrHandler.getArr()}</div>)
+     
+      left[0] = <div className="dot" key={left[0].key} style={{ ...circleStyles, ...tempStyle }} />
+
+      sortedArr.push(left.shift());
+    }
+
+    while (right.length) {
+      let originalIndex = getIndexByKey(fullArr, right[0].key);
+
+      let tempStyle = {
+        backgroundColor: right[0].props.style.backgroundColor,
+        right: (parseInt(right[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 43)) + 'px',
+      }
+        
+      console.log(right[0].key + " : " + originalIndex  + " - " + sortedArr.length)
+
+      arrHandler.change(arrHandler.indexByKey(right[0].key), tempStyle);
+      setVisualizer(<div className="dot-container">{arrHandler.getArr()}</div>)
+     
+      left[0] = <div className="dot" key={right[0].key} style={{ ...circleStyles, ...tempStyle }} />
+
+      sortedArr.push(right.shift());
+    }
+
+    console.log(getPrintArray(sortedArr))
     
-    return [...sortedArr, ...left, ...right]
+    return sortedArr
   }
-
-  // function mergeSort(a, n) {
-  //   if (n < 2) {
-  //     return;
-  //   }
-
-  //   let mid = n / 2;
-
-  //   let leftArr = [];
-  //   let rightArr = [];
-
-  //   for (let i = 0; i < mid; i++) {
-  //     leftArr[i] = a[i];
-  //   }
-
-  //   for (let i = mid; i < n; i++) {
-  //     rightArr[i - mid] = a[i];
-  //   }
-
-  //   mergeSort(leftArr, mid);
-  //   mergeSort(rightArr, n - mid);
-
-  //   merge(a, leftArr, rightArr, mid, n - mid);
-  // }
-
-  // function merge(a, l, r, left, right) {
-  //   let i = 0;
-  //   let j = 0;
-  //   let k = 0;
-
-  //   while (i < left && j < right) {
-  //     if (l[i].props.style.backgroundColor < r[j].props.style.backgroundColor) {
-  //       a[k++] = l[i++];
-  //     }
-  //     else {
-  //       a[k++] = r[j++];
-  //     }
-  //   }
-  //   while (i < left) {
-  //     a[k++] = l[i++];
-  //   }
-  //   while (j < right) {
-  //     a[k++] = r[j++];
-  //   }
-  //   // return a;
-  // }
-
-
 
   return (
     <div className="App">
