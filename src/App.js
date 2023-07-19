@@ -10,7 +10,7 @@ function App() {
   const [selected, setSelection] = useState(null);
   const [visualizer, setVisualizer] = useState(null);
   const [colorChoice, setChoice] = useState(0);
-  const [arrHandler, setArrHandler] = useState(new ArrayHandler([1, 2]));
+  const [arrHandler, setArrHandler] = useState(new ArrayHandler([]));
   const circleStyles = {
     width: '30px',
     height: '30px',
@@ -18,8 +18,7 @@ function App() {
     display: 'inline-block',
     border: '2px solid black',
     borderRadius: '50%',
-    position: 'relative',
-
+    position: 'relative', 
   }
 
   const showCreateArray = async () => {
@@ -103,30 +102,6 @@ function App() {
 
   const timer = ms => new Promise(res => setTimeout(res, ms))
 
-  const animateDot = async (index, newStyle, localArr) => {
-    setArr((localArr) => {
-      const updatedArr = [...localArr];
-      updatedArr[index] = (
-        <div
-          className="dot animated"
-          key={index}
-          style={{ ...circleStyles, ...newStyle }}
-        />
-      );
-      return updatedArr; // my merge moves ... but not in the right way i think?
-    });
-    //
-    await timer(1000)
-
-    setArr((localArr) => {
-      const updatedArr = [...localArr];
-      updatedArr[index] = (
-        <div className="dot" key={index} style={{ ...circleStyles, ...newStyle }} />
-      );
-      return updatedArr;
-    });
-  }
-
   const startSort = async () => {
     if (selected == "selectionSelect") {
       let localArr = arr;
@@ -143,12 +118,12 @@ function App() {
         // define moved styles
         let currentStyle = {
           backgroundColor: localArr[i].props.style.backgroundColor,
-          right: parseInt(localArr[i].props.style.right, 10) + (i - min) * 44 + 'px',
+          right: parseInt(localArr[i].props.style.right, 10) + (i - min) * 43 + 'px',
           transition: 'right 1s',
         }
         let newMinStyle = {
           backgroundColor: localArr[min].props.style.backgroundColor,
-          right: parseInt(localArr[min].props.style.right, 10) + (min - i) * 44 + 'px',
+          right: parseInt(localArr[min].props.style.right, 10) + (min - i) * 43 + 'px',
           transition: 'right 1s',
         }
 
@@ -173,7 +148,7 @@ function App() {
         while (j >= 0 && localArr[j].props.style.backgroundColor > key.props.style.backgroundColor) {
           let previousDotStyle = {
             backgroundColor: localArr[j].props.style.backgroundColor,
-            right: parseInt(localArr[j].props.style.right, 10) - 44 + 'px',
+            right: parseInt(localArr[j].props.style.right, 10) - 43 + 'px',
             transition: 'right 1s'
           }
 
@@ -187,14 +162,14 @@ function App() {
 
         let originalDotStyle = {
           backgroundColor: key.props.style.backgroundColor,
-          right: parseInt(key.props.style.right, 10) + ((i - j - 1) * 44) + 'px',
+          right: parseInt(key.props.style.right, 10) + ((i - j - 1) * 43) + 'px',
           transition: 'right 1s'
         }
         arrHandler.change(arrHandler.indexByKey(key.key), originalDotStyle);
         setVisualizer(<div className="dot-container">{arrHandler.getArr()}</div>)
 
         localArr[j + 1] = <div className="dot" key={key.key} style={{ ...circleStyles, ...originalDotStyle }} />;
-        
+
         await timer(1000);
       }
 
@@ -212,12 +187,12 @@ function App() {
           if (localArr[j].props.style.backgroundColor > localArr[j + 1].props.style.backgroundColor) {
             let leftStyle = {
               backgroundColor: localArr[j].props.style.backgroundColor,
-              right: parseInt(localArr[j].props.style.right) - 44 + 'px',
+              right: parseInt(localArr[j].props.style.right) - 43 + 'px',
               transition: 'right 1s',
             }
             let rightStyle = {
               backgroundColor: localArr[j + 1].props.style.backgroundColor,
-              right: parseInt(localArr[j + 1].props.style.right) + 44 + 'px',
+              right: parseInt(localArr[j + 1].props.style.right) + 43 + 'px',
               transition: 'right 1s',
             }
 
@@ -236,6 +211,77 @@ function App() {
       } while (swapped);
 
       setArr(localArr)
+    } else if (selected == "heapSelect") {
+      var localArr = arr;
+      let N = arr.length;
+
+      // build heap
+      for (let i = Math.floor(N / 2) - 1; i >= 0; i--) {
+        heapify(localArr, N, i);
+      }
+
+      // extract elements
+      for (let i = N - 1; i > 0; i--) {
+        // move current root to end
+        let leftStyle = {
+          backgroundColor: localArr[0].props.style.backgroundColor,
+          right: (parseInt(localArr[0].props.style.right, 10) - (i * 43)) + 'px',
+          transition: 'right 1s',
+        }
+        let rightStyle = {
+          backgroundColor: localArr[i].props.style.backgroundColor,
+          right: (parseInt(localArr[i].props.style.right, 10) + (i * 43)) + 'px',
+          transition: 'right 1s',
+        }
+        
+        arrHandler.change(arrHandler.indexByKey(localArr[0].key), leftStyle);
+        arrHandler.change(arrHandler.indexByKey(localArr[i].key), rightStyle);
+        
+        let temp = localArr[0].key;
+        localArr[0] = <div className="dot" key={localArr[i].key} style={{ ...circleStyles, ...rightStyle }} />;
+        localArr[i] = <div className="dot" key={temp} style={{ ...circleStyles, ...leftStyle }} />;
+    
+        await timer(1000);
+        // max heap?
+        heapify(localArr, i, 0);
+      }
+    }
+  }
+
+  async function heapify(localArr, N, i) {
+    let largest = i;
+    let l = 2 * i + 1;
+    let r = 2 * i + 2;
+
+    // if left is larger than root
+    if (l < N && localArr[l].props.style.backgroundColor > localArr[largest].props.style.backgroundColor)
+      largest = l;
+    
+    // if right child is larger than largest so far
+    if (r < N && localArr[r].props.style.backgroundColor > localArr[largest].props.style.backgroundColor)
+      largest = r;
+    
+    if (largest != i) {
+      let newStyle = {
+        backgroundColor: localArr[i].props.style.backgroundColor,
+        right: (parseInt(localArr[i].props.style.right, 10) + ((i - largest) * 43)) + 'px',
+        transition: 'right 1s',
+      }
+      let largestStyle = {
+        backgroundColor: localArr[largest].props.style.backgroundColor,
+        right: (parseInt(localArr[largest].props.style.right, 10) + ((largest - i) * 43)) + 'px',
+        transition: 'right 1s',
+      }
+
+      arrHandler.change(arrHandler.indexByKey(localArr[i].key), newStyle);
+      arrHandler.change(arrHandler.indexByKey(localArr[largest].key), largestStyle);
+      setVisualizer(<div className="dot-container">{arrHandler.getArr()}</div>)
+
+      let temp = localArr[i].key;
+      localArr[i] = <div className="dot" key={localArr[largest].key} style={{ ...circleStyles, ...largestStyle }} />;
+      localArr[largest] = <div className="dot" key={temp} style={{ ...circleStyles, ...newStyle }} />;
+      
+      heapify(localArr, N, largest);
     }
   }
 
@@ -254,7 +300,9 @@ function App() {
       rightArr.push(arr[i])
     }
     let right = await mergeSort(rightArr)
-    await timer(1000)
+
+    await timer(500)
+
     return merge(left, right)
   }
 
@@ -288,7 +336,7 @@ function App() {
 
         let tempStyle = {
           backgroundColor: left[0].props.style.backgroundColor,
-          right: (parseInt(left[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 44)) + 'px',
+          right: (parseInt(left[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 43)) + 'px',
           transition: 'right 1s',
         }
         
@@ -303,7 +351,7 @@ function App() {
 
         let tempStyle = {
           backgroundColor: right[0].props.style.backgroundColor,
-          right: parseInt(right[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 44) + 'px',
+          right: parseInt(right[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 43) + 'px',
           transition: 'right 1s',
         }
 
@@ -321,8 +369,7 @@ function App() {
 
       let tempStyle = {
         backgroundColor: left[0].props.style.backgroundColor,
-        right: (parseInt(left[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 44)) + 'px',
-        transition: 'right 1s',
+        right: (parseInt(left[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 43)) + 'px',
       }
         
       arrHandler.change(arrHandler.indexByKey(left[0].key), tempStyle);
@@ -338,8 +385,7 @@ function App() {
 
       let tempStyle = {
         backgroundColor: right[0].props.style.backgroundColor,
-        right: (parseInt(right[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 44)) + 'px',
-        transition: 'right 1s',
+        right: (parseInt(right[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 43)) + 'px',
       }
       
       arrHandler.change(arrHandler.indexByKey(right[0].key), tempStyle);
@@ -363,6 +409,7 @@ function App() {
           <option value="insertionSelect">Insertion Sort</option>
           <option value="mergeSelect">Merge Sort</option>
           <option value="bubbleSelect">Bubble Sort</option>
+          <option value="heapSelect">Heap Sort</option>
         </select>
         <button onClick={() => startSort()} className="start">Start</button>
       </div>
