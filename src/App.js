@@ -10,7 +10,7 @@ function App() {
   const [selected, setSelection] = useState(null);
   const [visualizer, setVisualizer] = useState(null);
   const [colorChoice, setChoice] = useState(0);
-  const [arrHandler, setArrHandler] = useState(new ArrayHandler([1, 2]));
+  const [arrHandler, setArrHandler] = useState(new ArrayHandler([]));
   const circleStyles = {
     width: '30px',
     height: '30px',
@@ -109,30 +109,6 @@ function App() {
 
   const timer = ms => new Promise(res => setTimeout(res, ms))
 
-  const animateDot = async (index, newStyle, localArr) => {
-    setArr((localArr) => {
-      const updatedArr = [...localArr];
-      updatedArr[index] = (
-        <div
-          className="dot animated"
-          key={index}
-          style={{ ...circleStyles, ...newStyle }}
-        />
-      );
-      return updatedArr; // my merge moves ... but not in the right way i think?
-    });
-    //
-    await timer(1000)
-
-    setArr((localArr) => {
-      const updatedArr = [...localArr];
-      updatedArr[index] = (
-        <div className="dot" key={index} style={{ ...circleStyles, ...newStyle }} />
-      );
-      return updatedArr;
-    });
-  }
-
   const startSort = async () => {
     console.log(arrHandler)// its back to 0 here
     if (selected == "selectionSelect") {
@@ -147,21 +123,20 @@ function App() {
         }
 
         let newStyle = {
+          transition: 'right 1s',
           backgroundColor: localArr[i].props.style.backgroundColor,
-          right: localArr[i].props.style.right + (i - min) * 35 + 'px',
+          right: (parseInt(localArr[i].props.style.right, 10) + (i - min) * 44) + 'px',
         }
         let tempStyle = {
+          transition: 'right 1s',
           backgroundColor: localArr[min].props.style.backgroundColor,
-          right: localArr[min].props.style.right + (min - i) * 35 + 'px',
+          right: (parseInt(localArr[min].props.style.right, 10) + (min - i) * 44) + 'px',
         }
 
         localArr[i] = <div className="dot" key={i} style={{ ...circleStyles, ...newStyle }} />
         localArr[min] = <div className="dot" key={min} style={{ ...circleStyles, ...tempStyle }} />
 
         setVisualizer(<div className="dot-container">{localArr}</div>)
-
-        animateDot(i, newStyle, localArr)
-        animateDot(min, tempStyle, localArr)
 
         let temp = localArr[i];
         localArr[i] = localArr[min];
@@ -181,8 +156,9 @@ function App() {
           localArr[j + 1] = localArr[j];
 
           let tempStyle = {
+            transition: 'right 1s',
             backgroundColor: localArr[j + 1].props.style.backgroundColor,
-            right: localArr[j + 1].props.style.right + 35 + 'px',
+            right: (parseInt(localArr[j + 1].props.style.right, 10) + 44) + 'px',
           }
           localArr[j + 1] = <div className="dot" key={localArr[j + 1].key} style={{ ...circleStyles, ...tempStyle }} />
 
@@ -209,12 +185,16 @@ function App() {
         for (let j = 0; j < arr.length - 1; j++) {
           if (localArr[j].props.style.backgroundColor > localArr[j + 1].props.style.backgroundColor) {
             let newStyle = {
+              transition: 'right 1s',
               backgroundColor: localArr[j].props.style.backgroundColor,
-              right: localArr[j].props.style.right + 35 + 'px',
+              right: (parseInt(localArr[j].props.style.right, 10) + 44) + 'px',
+              // position: 'absolute',
             }
             let tempStyle = {
+              transition: 'right 1s',
               backgroundColor: localArr[j + 1].props.style.backgroundColor,
-              right: localArr[j + 1].props.style.right - 35 + 'px',
+              right: (parseInt(localArr[j + 1].props.style.right, 10) - 44) + 'px',
+              // position: 'absolute',
             }
             localArr[j] = <div className="dot" key={localArr[j].key} style={{ ...circleStyles, ...newStyle }} />
             localArr[j + 1] = <div className="dot" key={localArr[j + 1].key} style={{ ...circleStyles, ...tempStyle }} />
@@ -282,8 +262,9 @@ function App() {
         let originalIndex = getIndexByKey(fullArr, left[0].key);
 
         let tempStyle = {
+          transition: 'right 1s',
           backgroundColor: left[0].props.style.backgroundColor,
-          right: (parseInt(left[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 43)) + 'px',
+          right: (parseInt(left[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 44)) + 'px',
         }
         
         console.log(left[0].key + " : " + originalIndex  + " - " + sortedArr.length)
@@ -298,8 +279,9 @@ function App() {
         let originalIndex = getIndexByKey(fullArr, right[0].key);
 
         let tempStyle = {
+          transition: 'right 1s',
           backgroundColor: right[0].props.style.backgroundColor,
-          right: parseInt(right[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 43) + 'px',
+          right: parseInt(right[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 44) + 'px',
         }
 
         console.log(right[0].key + " : " + originalIndex  + " - " + sortedArr.length)
@@ -319,8 +301,9 @@ function App() {
       let originalIndex = getIndexByKey(fullArr, left[0].key);
 
       let tempStyle = {
+        transition: 'right 1s',
         backgroundColor: left[0].props.style.backgroundColor,
-        right: (parseInt(left[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 43)) + 'px',
+        right: (parseInt(left[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 44)) + 'px',
       }
         
       console.log(left[0].key + " : " + originalIndex  + " - " + sortedArr.length)
@@ -337,8 +320,9 @@ function App() {
       let originalIndex = getIndexByKey(fullArr, right[0].key);
 
       let tempStyle = {
+        transition: 'right 1s',
         backgroundColor: right[0].props.style.backgroundColor,
-        right: (parseInt(right[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 43)) + 'px',
+        right: (parseInt(right[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 44)) + 'px',
       }
         
       console.log(right[0].key + " : " + originalIndex  + " - " + sortedArr.length)
