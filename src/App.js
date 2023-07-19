@@ -143,12 +143,12 @@ function App() {
         // define moved styles
         let currentStyle = {
           backgroundColor: localArr[i].props.style.backgroundColor,
-          right: parseInt(localArr[i].props.style.right, 10) + (i - min) * 43 + 'px',
+          right: parseInt(localArr[i].props.style.right, 10) + (i - min) * 44 + 'px',
           transition: 'right 1s',
         }
         let newMinStyle = {
           backgroundColor: localArr[min].props.style.backgroundColor,
-          right: parseInt(localArr[min].props.style.right, 10) + (min - i) * 43 + 'px',
+          right: parseInt(localArr[min].props.style.right, 10) + (min - i) * 44 + 'px',
           transition: 'right 1s',
         }
 
@@ -173,7 +173,7 @@ function App() {
         while (j >= 0 && localArr[j].props.style.backgroundColor > key.props.style.backgroundColor) {
           let previousDotStyle = {
             backgroundColor: localArr[j].props.style.backgroundColor,
-            right: parseInt(localArr[j].props.style.right, 10) - 43 + 'px',
+            right: parseInt(localArr[j].props.style.right, 10) - 44 + 'px',
             transition: 'right 1s'
           }
 
@@ -187,7 +187,7 @@ function App() {
 
         let originalDotStyle = {
           backgroundColor: key.props.style.backgroundColor,
-          right: parseInt(key.props.style.right, 10) + ((i - j - 1) * 43) + 'px',
+          right: parseInt(key.props.style.right, 10) + ((i - j - 1) * 44) + 'px',
           transition: 'right 1s'
         }
         arrHandler.change(arrHandler.indexByKey(key.key), originalDotStyle);
@@ -212,12 +212,12 @@ function App() {
           if (localArr[j].props.style.backgroundColor > localArr[j + 1].props.style.backgroundColor) {
             let leftStyle = {
               backgroundColor: localArr[j].props.style.backgroundColor,
-              right: parseInt(localArr[j].props.style.right) - 43 + 'px',
+              right: parseInt(localArr[j].props.style.right) - 44 + 'px',
               transition: 'right 1s',
             }
             let rightStyle = {
               backgroundColor: localArr[j + 1].props.style.backgroundColor,
-              right: parseInt(localArr[j + 1].props.style.right) + 43 + 'px',
+              right: parseInt(localArr[j + 1].props.style.right) + 44 + 'px',
               transition: 'right 1s',
             }
 
@@ -239,7 +239,7 @@ function App() {
     }
   }
 
-  function mergeSort(arr) {
+  async function mergeSort(arr) {
     // Base case
     if (arr.length <= 1) return arr
     let mid = Math.floor(arr.length / 2)
@@ -248,12 +248,13 @@ function App() {
     for (let i = 0; i < mid; i++) {
       leftArr.push(arr[i])
     }
-    let left = mergeSort(leftArr)
+    let left = await mergeSort(leftArr)
     let rightArr = [];
     for (let i = mid; i < arr.length; i++) {
       rightArr.push(arr[i])
     }
-    let right = mergeSort(rightArr)
+    let right = await mergeSort(rightArr)
+    await timer(1000)
     return merge(left, right)
   }
 
@@ -287,7 +288,7 @@ function App() {
 
         let tempStyle = {
           backgroundColor: left[0].props.style.backgroundColor,
-          right: (parseInt(left[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 43)) + 'px',
+          right: (parseInt(left[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 44)) + 'px',
           transition: 'right 1s',
         }
         
@@ -302,7 +303,7 @@ function App() {
 
         let tempStyle = {
           backgroundColor: right[0].props.style.backgroundColor,
-          right: parseInt(right[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 43) + 'px',
+          right: parseInt(right[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 44) + 'px',
           transition: 'right 1s',
         }
 
@@ -320,7 +321,8 @@ function App() {
 
       let tempStyle = {
         backgroundColor: left[0].props.style.backgroundColor,
-        right: (parseInt(left[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 43)) + 'px',
+        right: (parseInt(left[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 44)) + 'px',
+        transition: 'right 1s',
       }
         
       arrHandler.change(arrHandler.indexByKey(left[0].key), tempStyle);
@@ -336,7 +338,8 @@ function App() {
 
       let tempStyle = {
         backgroundColor: right[0].props.style.backgroundColor,
-        right: (parseInt(right[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 43)) + 'px',
+        right: (parseInt(right[0].props.style.right, 10) + ((originalIndex - sortedArr.length) * 44)) + 'px',
+        transition: 'right 1s',
       }
       
       arrHandler.change(arrHandler.indexByKey(right[0].key), tempStyle);
